@@ -11,6 +11,7 @@ class DinoFlying(Obstacle):
         self.dino_flying = BIRD[0]
         self.dino_flying_rect = self.dino_flying.get_rect()
         self.dino_flying_rect.y = self.Y_POS
+        self.dino_flying_rect.x = self.X_POS
 
     def draw(self, screen: pygame.Surface):
         screen.blit(self.dino_flying, (self.dino_react.x, self.dino_react.y))
