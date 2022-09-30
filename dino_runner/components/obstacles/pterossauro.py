@@ -1,17 +1,35 @@
 import pygame
-from dino_runner.components.obstacles.obstacle import Obstacle
 from dino_runner.utils.constants import BIRD, SCREEN_WIDTH
 
 
-class DinoFlying(Obstacle):
+class Pterosaur():
     Y_POS = 250
     X_POS = SCREEN_WIDTH
 
     def __init__(self):
-        self.dino_flying = BIRD[0]
-        self.dino_flying_rect = self.dino_flying.get_rect()
-        self.dino_flying_rect.y = self.Y_POS
-        self.dino_flying_rect.x = self.X_POS
+        self.image = BIRD[0]
+        self.rect = self.image.get_rect()
+        self.rect.y = self.Y_POS
+        self.rect.x = self.X_POS
+
+        self.step_index = 0
+
+    def update(self, game_speed, obstacle):
+        self.run(game_speed, obstacle)
+
+        if self.step_index >= 10:
+            self.step_index = 0
+
+    def run(self, game_speed, obstacle):
+        self.image = BIRD[0] if self.step_index < 5 else BIRD[1]
+        self.rect.y = self.Y_POS
+
+        self.rect.x -= game_speed
+
+        if self.rect.x < -self.rect.width:
+            obstacle.pop()
+
+        self.step_index += 1
 
     def draw(self, screen: pygame.Surface):
-        screen.blit(self.dino_flying, (self.dino_react.x, self.dino_react.y))
+        screen.blit(self.image, self.rect)
