@@ -2,13 +2,12 @@ import random
 
 import pygame
 from dino_runner.components.obstacles.cactus import Cactus
-# from dino_runner.components.obstacles.obstacles import Obstacles
 from dino_runner.components.obstacles.pterossauro import Pterosaur
 
 
 class ObstacleManager:
     def __init__(self):
-        self.obstacles = []
+        self.obstacles = []  # Feat:
 
     def update(self, game):
         if len(self.obstacles) == 0:
