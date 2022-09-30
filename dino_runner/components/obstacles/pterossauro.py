@@ -1,15 +1,18 @@
+import random
+
 import pygame
 from dino_runner.utils.constants import BIRD, SCREEN_WIDTH
 
 
 class Pterosaur():
-    Y_POS = 250
+    Y_POS = (250, 310)
     X_POS = SCREEN_WIDTH
 
     def __init__(self):
+        pos = random.randint(0, 1)
         self.image = BIRD[0]
         self.rect = self.image.get_rect()
-        self.rect.y = self.Y_POS
+        self.rect.y = self.Y_POS[pos]
         self.rect.x = self.X_POS
 
         self.step_index = 0
@@ -22,7 +25,7 @@ class Pterosaur():
 
     def run(self, game_speed, obstacle):
         self.image = BIRD[0] if self.step_index < 5 else BIRD[1]
-        self.rect.y = self.Y_POS
+        # self.rect.y = self.Y_POS
 
         self.rect.x -= game_speed
 

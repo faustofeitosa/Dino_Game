@@ -11,7 +11,7 @@ class ObstacleManager:
 
     def update(self, game):
         if len(self.obstacles) == 0:
-            obstacle_type = random.randint(0, 1)
+            obstacle_type = random.randint(0, 2)
             if obstacle_type == 0:
                 self.obstacles.append(Pterosaur())
             else:

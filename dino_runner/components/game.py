@@ -60,8 +60,9 @@ class Game:
         self.obstacle_manager.update(self)
 
     def draw(self):
+        dark = self.points > 700 and self.points < 1400 or self.points > 3000 and self.points < 300
         self.clock.tick(FPS)
-        if self.points > 700 and self.points < 1400:
+        if dark:
             self.screen.fill((32, 28, 36))
             self.draw_score(True)
         else:
