@@ -19,6 +19,15 @@ ICON = pygame.image.load(os.path.join(IMG_DIR, "rsz_dinowallpaper.png"))
 # JUMP_MUSIC = pygame.mixer.Sound(
 #     os.path.join(MUSIC_DIR, "sounds/jump_sound.wav"))
 
+GAME_OVER_ICON = pygame.image.load(os.path.join(IMG_DIR, "Other/GameOver.png"))
+
+HEARTH_STATUS = [
+    pygame.image.load(os.path.join(IMG_DIR, "Other/alive.png")),
+    pygame.image.load(os.path.join(IMG_DIR, "Other/dontalive.png"))
+]
+
+DEAD = pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoDead.png"))
+
 RUNNING = [
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoRun1.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoRun2.png")),
@@ -79,4 +88,6 @@ BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
-DEFAULT_TYPE = "default"
+DEFAULT_STATE = "default"
+SHIELD_STATE = "shield"
+HAMMER_STATE = "hammer"

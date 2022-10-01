@@ -1,30 +1,56 @@
 import pygame
-from dino_runner.utils.constants import DUCKING, JUMPING, RUNNING
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
+from dino_runner.utils.constants import (DEFAULT_STATE, DUCKING,
+                                         DUCKING_HAMMER, DUCKING_SHIELD,
+                                         HAMMER_STATE, JUMPING, JUMPING_HAMMER,
+                                         JUMPING_SHIELD, RUNNING,
+                                         RUNNING_HAMMER, RUNNING_SHIELD,
+                                         SHIELD_STATE)
 from pygame.sprite import Sprite
+
+DUCK_IMG = {
+    DEFAULT_STATE: DUCKING,
+    SHIELD_STATE: DUCKING_SHIELD,
+    HAMMER_STATE: DUCKING_HAMMER
+}
+
+JUMP_IMG = {
+    DEFAULT_STATE: JUMPING,
+    SHIELD_STATE: JUMPING_SHIELD,
+    HAMMER_STATE: JUMPING_HAMMER
+}
+
+RUN_IMG = {
+    DEFAULT_STATE: RUNNING,
+    SHIELD_STATE: RUNNING_SHIELD,
+    HAMMER_STATE: RUNNING_HAMMER
+}
 
 
 class Dino(Sprite):
-    # Initial Position
     X_POS = 80
     Y_POS = 310
 
     JUMP_VEL = 8.5
 
     def __init__(self):
+        self.state = RUN_IMG[DEFAULT_STATE][0]
         self.dino = RUNNING[0]
-        # Modify
+
         self.dino_react = self.dino.get_rect()
         self.dino_react.x = self.X_POS
         self.dino_react.y = self.Y_POS
         self.step_index = 0
 
-        # Actions
         self.dino_run = True
         self.dino_jump = False
         self.dino_down = False
 
-        # Speed
+        self.shield = False
+        self.hammer = False
+
         self.jump_vel = self.JUMP_VEL
+        self.shield_time_up = 10
 
     def update(self, event_key):
         jump_event = event_key[pygame.K_UP] or event_key[pygame.K_SPACE]

@@ -25,7 +25,6 @@ class Pterosaur():
 
     def run(self, game_speed, obstacle):
         self.image = BIRD[0] if self.step_index < 5 else BIRD[1]
-        # self.rect.y = self.Y_POS
 
         self.rect.x -= game_speed
 

@@ -1,8 +1,11 @@
 import pygame
+from dino_runner.components.Cloud import CloudManager
 from dino_runner.components.Dino import Dino
-from dino_runner.components.obstacles.obstacle_manage import ObstacleManager
-from dino_runner.utils.constants import (BG, FPS, ICON, JUMPING, SCREEN_HEIGHT,
-                                         SCREEN_WIDTH, TITLE)
+from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
+from dino_runner.utils.constants import (BG, FPS, GAME_OVER_ICON,
+                                         HEARTH_STATUS, ICON, JUMPING,
+                                         SCREEN_HEIGHT, SCREEN_WIDTH, TITLE)
 
 FONT_STYLE = "freesansbold.ttf"
 
@@ -17,6 +20,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.player = Dino()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
+        self.cloud = CloudManager()
         self.playing = False
         self.running = False
         self.game_speed = 20
@@ -31,13 +36,18 @@ class Game:
         self.running = True
         while self.running:
             if not self.playing:
-                self.show_menu()
+                if self.death_count == 3:
+                    self.game_over()
+                else:
+                    self.show_menu()
         pygame.display.quit()
         pygame.quit()
 
     def run(self):
         self.points = 0
         self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_powers()
+        self.cloud.reset_cloud()
         self.game_speed = 20
         self.playing = True
         while self.playing:
@@ -57,7 +67,9 @@ class Game:
             self.game_speed += 1
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
+        self.cloud.update(self)
         self.obstacle_manager.update(self)
+        self.power_up_manager.update(self)
 
     def draw(self):
         dark = self.points > 700 and self.points < 1400 or self.points > 3000 and self.points < 300
@@ -65,12 +77,18 @@ class Game:
         if dark:
             self.screen.fill((32, 28, 36))
             self.draw_score(True)
+            if self.player.shield:
+                self.power_up_manager.draw_timer(FONT_STYLE, self.screen, True)
         else:
             self.screen.fill((255, 255, 255))
             self.draw_score()
+            if self.player.shield:
+                self.power_up_manager.draw_timer(FONT_STYLE, self.screen)
         self.draw_background()
+        self.cloud.draw(self.screen)
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.power_up_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -93,21 +111,24 @@ class Game:
         text_rect.center = (1000, 50)
         self.screen.blit(text, text_rect)
 
-    def handle_key_events_on_menu(self):
+    def handle_key_events_on_menu(self, game_over=False):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
+            if not game_over:
+                if event.type == pygame.KEYDOWN:
+                    self.run()
+            else:
+                self.playing = False
+                self.running = False
 
-            if event.type == pygame.KEYDOWN:
-                self.run()
-
-    def draw_message(self, message, pos_y, is_death=False):
+    def draw_message(self, message, pos_y=0, is_dark=False):
         half_screen_height = SCREEN_HEIGHT//2
         half_screen_width = SCREEN_WIDTH//2
 
         font = pygame.font.Font(FONT_STYLE, 30)
-        if is_death:
+        if is_dark:
             text = font.render(message, True, (255, 27, 28))
         else:
             text = font.render(message, True, (0, 0, 0))
@@ -120,19 +141,19 @@ class Game:
         half_screen_height = SCREEN_HEIGHT//2
         half_screen_width = SCREEN_WIDTH//2
 
-        # Dino
-        self.screen.blit(
-            JUMPING, (half_screen_width - 43.5, half_screen_height - 120))
+        self.screen.blit(JUMPING, (half_screen_width -
+                         43.5, half_screen_height - 120))
 
         # Start
         if self.death_count == 0:
-            self.draw_message("Press any key to start", 0)
+            self.draw_message("Press any key to start")
         # Restart
         else:
-            self.draw_message("Press any key to restart", 0)
+            self.draw_message("Press any key to restart")
 
         # Death
-        self.draw_message(f"Deaths: {self.death_count}", 50, True)
+        # self.draw_message(f"Deaths: {self.death_count}", 50, True)
+        self.draw_hearth()
 
         # Score
         self.draw_message(f"Your Score: {self.points}", 100)
@@ -142,3 +163,31 @@ class Game:
 
         pygame.display.update()
         self.handle_key_events_on_menu()
+
+    def draw_hearth(self):
+        height = SCREEN_HEIGHT//2
+        width = SCREEN_WIDTH//2
+
+        status = HEARTH_STATUS
+        if self.death_count == 2:
+            self.screen.blit(status[1], (width + 25, height + 30))
+            self.screen.blit(status[1], (width - 25, height + 30))
+            self.screen.blit(status[0], (width - 75, height + 30))
+        elif self.death_count == 1:
+            self.screen.blit(status[1], (width + 25, height + 30))
+            self.screen.blit(status[0], (width - 25, height + 30))
+            self.screen.blit(status[0], (width - 75, height + 30))
+        else:
+            self.screen.blit(status[0], (width + 25, height + 30))
+            self.screen.blit(status[0], (width - 25, height + 30))
+            self.screen.blit(status[0], (width - 75, height + 30))
+
+    def game_over(self):
+        half_screen_height = SCREEN_HEIGHT//2
+        image_width = GAME_OVER_ICON.get_width()
+        self.screen.fill((255, 255, 255))
+
+        self.screen.blit(
+            GAME_OVER_ICON, (image_width, half_screen_height))
+        pygame.display.update()
+        self.handle_key_events_on_menu(True)
