@@ -1,11 +1,20 @@
-## Features
+### Script
 
-- Hearth
+- Modificações na class Dino
+- Modificações no Game
+  - Clouds
+- Hearts
+- States ["Ducking", "Jump", "Running"]
 
-  - Se quantidade de vidas menor que 3, tem chance de aparecer mais uma vida
+- Obstacles
 
-- Mudar imagem ao morrer
-- Martelo bate nos obstacles e destrói eles
-- Mudar o personagem e obstacles
-- Se speed_game > 50, obstacles mais hard
-- ...
+- Power Ups
+
+  - Power manager
+  - Choice buffs
+  - Life
+  - Speed
+  - Reverse
+
+- Sounds
+- Texts
